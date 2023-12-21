@@ -1,26 +1,47 @@
+
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="flex flex-wrap w-full  bg-slate-800">
+    <h1 class="w-full text-center text-3xl  text-yellow-400 my-4">Markdown App</h1>
+    <section class="flex m-auto w-10/12 h-screen">
+      <article class="w-1/2 border">
+        <textarea
+          ref="markdownTextArea"
+          class="w-full h-full"
+          :value="text"
+          @input="update"
+        ></textarea>
+      </article>
+      <article class="bg-slate-400 w-60  text-center p-5 " v-html="markedText"></article>
+    </section>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import { marked } from 'marked';
+import useDebounce from './usedebounce.js'
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  data() {
+    return {
+      text: "**this is markdown app**",
+      debounce: "",
+    };
+  },
+  computed: {
+    markedText() {
+      return marked(this.text);
+    },
+  },
+  methods: {
+    update(e) {
+      const task = () => (this.text = e.target.value);
+      this.debounce(task, 500);
+    },
+  },
+  mounted() {
+    this.debounce = useDebounce();
+    this.$refs.markdownTextArea.focus();
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>
